@@ -20,6 +20,21 @@ module.exports = function(schema, options) {
 					this.invalidate(pathname, pathMessage, value);
 			}, pathMessage);
 		}
+		else if (instance === 'Array') {
+			if (options.type && options.type.length > 0 && options.type[0].integer) {
+				var pathMessage = message;
+				if (typeof options.type[0].integer === 'string') {
+					pathMessage = options.type[0].integer;
+				}
+
+				schema.path(pathname).validate(function(value) {
+					if(value && value.length > 0)
+						for (var v of value)
+							if(!(parseInt(v) === v))
+								this.invalidate(pathname, pathMessage, value);
+				}, pathMessage);
+			}
+		}
 	};
 
 	var recursiveIteration = function(schema) {
